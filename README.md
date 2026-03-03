@@ -1,63 +1,66 @@
-# YouTube 24/7 Livestream Bot (Self-hosted)
+# NeonLoop: Self-Hosted YouTube 24/7 Livestream Bot
 
-A self-hosted Python + FFmpeg bot that runs a non-stop YouTube livestream by looping through local video files.
+A Python + FFmpeg livestream engine with **channel-surf scheduling**, **anti-repeat queue logic**, and **live on-stream overlays**.
+
+## Why this is different
+Instead of endlessly looping one static folder, this bot behaves like a mini TV network:
+
+- **Channel Surf Mode**: rotates between multiple content channels (folders) on a timed interval with weighted randomness.
+- **Anti-repeat Queue**: avoids replaying the same clips too quickly using a rolling cooldown window.
+- **Dynamic Overlays**: adds live watermark + channel name + real-time clock directly on stream.
+- **Fallback Scene**: if a channel runs out of clips, it automatically streams a generated “be right back / switching channel” scene.
 
 ## Features
-- 24/7 looping livestream to YouTube RTMP ingest
-- Automatic restart on FFmpeg crash/disconnect
-- Rotates through all media files in a folder
-- Optional shuffle mode
-- Configurable bitrate, FPS, resolution, and audio settings
+- 24/7 YouTube RTMP streaming
+- Multiple channels with weights
+- Recursive media discovery
+- Batch-based playlist generation for variety
+- Optional audio loudness normalization (`loudnorm`)
+- `--dry-run` mode to inspect generated FFmpeg command safely
 
 ## Requirements
 - Python 3.10+
-- `ffmpeg` installed and available in `PATH`
-- A YouTube livestream key
+- `ffmpeg` installed and in `PATH`
+- YouTube stream key
 
 ## Quick Start
-1. Create a config:
+1. Create config:
    ```bash
    cp config.example.json config.json
    ```
-2. Add your stream key and media path in `config.json`.
-3. Put videos in your media directory (e.g., `./media`).
-4. Run:
+2. Set your stream key in `config.json`.
+3. Put videos under channel folders from config (example):
+   ```
+   ./media/chill
+   ./media/hype
+   ./media/cinematic
+   ```
+4. Test without streaming:
+   ```bash
+   python stream_bot.py --config config.json --dry-run
+   ```
+5. Go live:
    ```bash
    python stream_bot.py --config config.json
    ```
 
-## Configuration
-`config.json` fields:
+## Main Config Concepts
+- `channels`: list of channel objects with `name`, `path`, and optional `weight`
+- `channel_surf`: controls timed channel switching
+- `batch_size`: number of clips selected each cycle
+- `cooldown_window`: how many recently played clips to avoid
+- `overlay`: on-stream watermark + clock toggles
+- `fallback_scene`: generated scene when no media found in selected channel
 
-- `stream_key`: Your YouTube stream key
-- `ingest_url`: RTMP endpoint (default: `rtmp://a.rtmp.youtube.com/live2`)
-- `media_dir`: Directory containing videos
-- `file_extensions`: Allowed media extensions
-- `shuffle`: Shuffle playlist each cycle
-- `restart_delay_seconds`: Delay before retry on failure
-- `video`: video encode settings (`resolution`, `fps`, `bitrate`, `maxrate`, `bufsize`, `preset`)
-- `audio`: audio encode settings (`bitrate`, `sample_rate`)
+## Useful Commands
+- One cycle only:
+  ```bash
+  python stream_bot.py --config config.json --once
+  ```
+- Dry run command generation:
+  ```bash
+  python stream_bot.py --config config.json --dry-run
+  ```
 
-## Notes
-- Keep stream key private.
-- For reliability, run under systemd, Docker, or a process manager.
-
-## systemd (optional)
-Example unit:
-
-```ini
-[Unit]
-Description=YouTube 24/7 Livestream Bot
-After=network-online.target
-Wants=network-online.target
-
-[Service]
-WorkingDirectory=/opt/youtube-bot
-ExecStart=/usr/bin/python3 /opt/youtube-bot/stream_bot.py --config /opt/youtube-bot/config.json
-Restart=always
-RestartSec=5
-User=streambot
-
-[Install]
-WantedBy=multi-user.target
-```
+## Deployment Tip
+Run with `systemd`/Docker/PM2/supervisor for automatic restart at process level.

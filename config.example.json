@@ -2,19 +2,41 @@
   "stream_key": "YOUR_YOUTUBE_STREAM_KEY",
   "ingest_url": "rtmp://a.rtmp.youtube.com/live2",
   "media_dir": "./media",
+  "channels": [
+    {"name": "chill", "path": "./media/chill", "weight": 3},
+    {"name": "hype", "path": "./media/hype", "weight": 2},
+    {"name": "cinematic", "path": "./media/cinematic", "weight": 1}
+  ],
+  "channel_surf": {
+    "enabled": true,
+    "switch_interval_seconds": 1800
+  },
   "file_extensions": [".mp4", ".mkv", ".mov", ".webm"],
-  "shuffle": false,
-  "restart_delay_seconds": 5,
+  "shuffle": true,
+  "batch_size": 8,
+  "cooldown_window": 24,
+  "restart_delay_seconds": 4,
   "video": {
     "resolution": "1920x1080",
     "fps": 30,
-    "bitrate": "4500k",
-    "maxrate": "4500k",
-    "bufsize": "9000k",
+    "bitrate": "5000k",
+    "maxrate": "5000k",
+    "bufsize": "10000k",
     "preset": "veryfast"
   },
   "audio": {
     "bitrate": "160k",
-    "sample_rate": 44100
+    "sample_rate": 44100,
+    "normalize": true
+  },
+  "overlay": {
+    "enabled": true,
+    "watermark": "NEON LOOP TV",
+    "clock": true
+  },
+  "fallback_scene": {
+    "enabled": true,
+    "message": "CHANNEL SWITCHING • BACK IN A MOMENT",
+    "duration_seconds": 30
   }
 }
