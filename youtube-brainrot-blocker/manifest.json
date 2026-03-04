@@ -5,10 +5,10 @@
   "description": "Blocks YouTube videos and Shorts that contain blocked words in title, description, or tags.",
   "content_scripts": [
     {
-      "matches": ["*://www.youtube.com/*", "*://m.youtube.com/*"],
+      "matches": ["*://www.youtube.com/*", "*://m.youtube.com/*","*://youtube.com/*"],
       "js": ["content.js"],
       "run_at": "document_idle"
     }
   ],
-  "host_permissions": ["*://www.youtube.com/*", "*://m.youtube.com/*"]
+  "host_permissions": ["*://www.youtube.com/*", "*://m.youtube.com/*", "*://youtube.com/*"]
 }
