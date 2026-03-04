@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Mega QoL Toolkit",
+  "description": "A Chrome extension packing 150 quality-of-life improvements for browsing productivity, readability, comfort, and control.",
+  "version": "1.0.0",
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Mega QoL Toolkit",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
